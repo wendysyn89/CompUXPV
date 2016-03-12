@@ -297,7 +297,9 @@ def get_category():
     for i,item in enumerate(lines):
         if i>0:
             sp= item.split()
-            sp[0]='sent_1028'
+            
+            ###change 1028 to number of items, sent_1028 represent review vector in item vector file for similarity comparison###
+            sp[0]='sent_1028' 
             new_review_text=' '.join(sp)
             print new_review_text
             result=check_similar(new_review_text)
