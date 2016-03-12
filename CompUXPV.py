@@ -15,7 +15,7 @@ import utils, matutils
 from collections import Counter
 from collections import defaultdict
 import codecs
-import pymongo
+
 
 logging.basicConfig(format='%(asctime)s : %(threadName)s : %(levelname)s : %(message)s', level=logging.INFO)
 logging.info("running %s" % " ".join(sys.argv))
