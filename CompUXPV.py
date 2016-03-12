@@ -40,16 +40,19 @@ review_file= 'review.txt'
 program = os.path.basename(sys.argv[0])
 logging.info("finished running %s" % program)
 
+'''learn word vector'''
 def learn_word_vector():
     model = Word2Vec(LineSentence(input_file), size=100, window=5, sg=0, min_count=5, workers=8)
     #model.save(input_file + '.model')
     model.save_word2vec_format('all_item_label.model.bin', binary=True)
     model.save_word2vec_format(input_file + '.vec')
 
+'''learn vector for review'''
 def learn_p_vector():
     model = Sent2Vec(LineSentence(review_file), model_file=input_file + '.model')
     model.save_sent2vec_format(review_file + '.vec')
 
+'''learn vector for item'''
 def learn_item_vector():
     model = Sent2Vec(LineSentence(item_file), model_file=input_file + '.model')
     model.save_sent2vec_format(item_file + '.vec')
@@ -280,6 +283,8 @@ def get_construct(idd):
 
 #review_text= "This phone is good. I feel happy."
 
+
+'''predict construct category'''
 def get_category():
     result_list=[]
 
@@ -307,6 +312,9 @@ def get_category():
 
     return result_list
 
+
+'''##### Main function to predict construct category #####'''
+
 """Learn word vector"""
 #learn_word_vector()
 
@@ -320,20 +328,3 @@ get_category()
 
 
 
-
-
-
-# print model['sent_0']
-# print model['sent_007']
-# with utils.smart_open("overall.txt.vec", 'wb') as fout:
-#     fout.write(utils.to_utf8("sent_%d %s\n" % (1000, ' '.join("%f" % val for val in model['sent_1']))))
-
-# text_file = open("ce.txt", "r")
-# lines = text_file.readlines()
-# for item in lines:
-#     m = re.search(r"%*(\d+)%",item)#extract sent id
-#     sent_id= m.group(1)
-#     # print sent_id
-#     result= model.most_similar("sent_%i" %int(sent_id))
-#     # print result
-#     read_sent(item,result,sent_id)
