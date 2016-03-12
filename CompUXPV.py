@@ -15,7 +15,7 @@ import utils, matutils
 from collections import Counter
 from collections import defaultdict
 import codecs
-import pymongo
+
 
 logging.basicConfig(format='%(asctime)s : %(threadName)s : %(levelname)s : %(message)s', level=logging.INFO)
 logging.info("running %s" % " ".join(sys.argv))
@@ -56,30 +56,6 @@ def learn_p_vector():
 def learn_item_vector():
     model = Sent2Vec(LineSentence(item_file), model_file=input_file + '.model')
     model.save_sent2vec_format(item_file + '.vec')
-
-
-def read_sent(txt,result,sid):
-    text_file = open("ce.txt", "r")
-    lines = text_file.readlines()
-    for item in lines:
-        m = re.search(r"%*(\d+)%",item)#extract sent id
-        sent_id= m.group(1)
-        print sent_id
-
-        """for checking fmeasure"""
-        if ("sent_%i" %int(sent_id))==result[0][0]:
-            print result[0][0]
-            if result[0][1]>0:
-                with open("ce_result.txt", 'a') as f:
-                    f.write(txt+item+str(result[0][1])+'\n'+'\n')
-            # with open("docvec_sent_3.txt", 'a') as f:
-            #     f.write(item+'\n'+row[3]+'\n'+str(result[0][1])+'\n'+'\n')
-
-            # with open("cat4lsa_dbow.txt", 'a') as f:
-            #     f.write(catid+'\n')
-
-
-    return None
 
 
 def get_best_ux2(result1,result2):
@@ -152,7 +128,7 @@ def get_best_ux(result):
 
         else:
 
-            with open('ann4_doc2vecresult_details.txt', 'a') as f:
+            with open('doc2vecresult.txt', 'a') as f:
                 f.write('get the construct with highest frequency'+'\n')
             #print 'get the construct with highest frequency'
             for item in r:
@@ -172,6 +148,8 @@ def check_similar(new_last_line):
     open("all_item_label.txt.vec", 'w').writelines(lines2)
 
     model = gensim.models.Doc2Vec.load_word2vec_format('all_item_label.txt.vec', binary=False)
+
+    ###compare items' vectors with review's vector represented by 'sent_1028'
     return model.most_similar("sent_1028")
 
 def get_details(item):
@@ -200,26 +178,9 @@ def get_result_list(result):
             #print item
             a,b,c=get_details(item)
             resultlist.append((a,b,c))
-            with open("ann4_doc2vecresult_details.txt", 'a') as f:
+            with open("doc2vecresult.txt", 'a') as f:
                 f.write("item:::"+str(a)+'\t'+str(b)+'\t'+str(c)+'\n')
     return resultlist
-
-result=[]
-def get_ann_details(item):
-    #print item
-    sid= item.split()[0]
-    with open('ann4.csv', 'rb') as f:
-        reader = csv.reader(f, delimiter="|")
-        for row in reader:
-            # print row[0]
-            # print item[0]
-            if row[0]==sid:
-                #print 'here'
-                id= row[1]
-                txt= row[2]
-                with open("ann4_doc2vecresult_details.txt", 'a') as f:
-                    f.write('\n'+"review:::"+str(txt)+'\t'+str(id)+'\n')
-                return id,txt
 
 
 def get_cid(idd):
@@ -258,29 +219,6 @@ def get_construct(idd):
             an="Trust"
             return an
 
-# text_file = open("ann4.txt.vec", "r")
-#
-# lines = text_file.readlines()
-# for i,item in enumerate(lines):
-#
-#     if i>0:
-#         actual_id,review=get_ann_details(item)
-#         print 'review', review
-#         acid= get_cid(actual_id)
-#         sp= item.split()
-#         sp[0]='sent_1028'
-#         new_last_line=' '.join(sp)
-#         result=check_similar(new_last_line)
-#         r_list=get_result_list(result)
-#         print 'r list',r_list
-#         predict_id= get_best_ux(r_list)
-#         print 'predict id',predict_id
-#         print '\n'
-#         with open("ann4_doc2vecresult_details_2.txt", 'a') as f:
-#             f.write('\n'+"predicted id:::"+str(predict_id)+'\t'+'\n')
-#         with open("ann4_doc2vec_result.txt", 'a') as f:
-#             f.write('@'+str(predict_id)+'@'+'#'+str(acid)+'#'+str(review)+'\n')
-
 #review_text= "This phone is good. I feel happy."
 
 
@@ -297,7 +235,9 @@ def get_category():
     for i,item in enumerate(lines):
         if i>0:
             sp= item.split()
-            sp[0]='sent_1028'
+            
+            ###change 1028 to number of items, sent_1028 represent review vector in item vector file for similarity comparison###
+            sp[0]='sent_1028' 
             new_review_text=' '.join(sp)
             print new_review_text
             result=check_similar(new_review_text)
@@ -325,6 +265,5 @@ def get_category():
 """Learn paragraph vector for review/query and get category"""
 
 get_category()
-
 
 
