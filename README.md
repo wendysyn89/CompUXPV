@@ -4,6 +4,8 @@ This is an user experience prediction engine using computational semantics appro
 Files usages:
 
 review.txt -> Review for prediction
+
+
 all_item_label.txt -> Total of 1028 items (5 construct category) for prediction. Last line (1029) is default value to be replaced with review's vector during prediction.
 The prediction engine will derive paragraph vector for both review and measurement items, next will compute their semantic similarity.
 
